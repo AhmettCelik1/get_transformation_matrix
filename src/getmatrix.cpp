@@ -10,39 +10,39 @@
 
 #include <Eigen/Dense>
 
-
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "getmatrix");
     ros::NodeHandle n;
 
-    tf::TransformListener listener;
-    tf::StampedTransform transform;
-    geometry_msgs::TransformStamped transformStamped;
+    //! Tf2 stuff for extrinsic matrix.
+    tf2_ros::Buffer tfBuffer;
+    tf2_ros::TransformListener tfListener(tfBuffer);
+    geometry_msgs::TransformStamped t_trans_par_to_child;
+
+    ROS_INFO("Waiting for transform from velodyne to cam01");
 
     try
     {
-        ros::Duration(1).sleep();
-        listener.lookupTransform("velodyne", "cam01", ros::Time(0), transform);
-        tf::transformStampedTFToMsg(transform, transformStamped);
-    }
-
-    catch (tf::TransformException ex)
-    {
-        ROS_ERROR("%s", ex.what());
         ros::Duration(1.0).sleep();
+        t_trans_par_to_child = tfBuffer.lookupTransform("velodyne", "cam01", ros::Time(0));
     }
 
-    // print transformStamped
-    std::cout << transformStamped << std::endl;
+    catch (tf2::TransformException &ex)
+    {
+        ROS_WARN("%s", ex.what());
+        ros::Duration(0.1).sleep();
+    }
 
+    std::cout << "transformstamp: " << t_trans_par_to_child << std::endl;
 
-    Eigen::Isometry3d eigen_transform;
-    tf2::transformToEigen(transformStamped);
+    Eigen::Isometry3d transformation_matrix = tf2::transformToEigen(t_trans_par_to_child);
 
-    //print eigen_transform
-    std::cout << eigen_transform.matrix() << std::endl;
+    Eigen::Matrix4d eigen_transformation_matrix = transformation_matrix.matrix();
 
-    
+    std::cout << "Eigen transformation matrix: " << std::endl;
 
+    std::cout << eigen_transformation_matrix << std::endl;
+
+    return 0;
 }
