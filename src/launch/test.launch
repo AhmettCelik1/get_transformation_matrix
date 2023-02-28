@@ -1,0 +1,11 @@
+<launch>
+
+    <!-- Lidar - Camera Extrinsic Parameters -->
+    <node pkg="tf" type="static_transform_publisher"
+        name="transformation_velodyne_to_camera"
+        args="0 0 -0.2 -1.57 0.01 -1.57 velodyne cam01 100" />
+
+
+    <node pkg="get_transformation_matrix" type="getmatrix" name="getmatrix" output="screen" />
+
+</launch>
