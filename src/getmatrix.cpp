@@ -20,7 +20,7 @@ int main(int argc, char **argv)
     tf2_ros::TransformListener tfListener(tfBuffer);
     geometry_msgs::TransformStamped t_trans_par_to_child;
 
-    ROS_INFO("Waiting for transform from velodyne to cam01");
+    ROS_INFO("Waiting for transform from velodyne to cam01"); 
 
     try
     {
